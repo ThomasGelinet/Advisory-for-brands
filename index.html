@@ -1937,6 +1937,10 @@ html.deck .dk-foot-n{transition:opacity .3s cubic-bezier(.22,.61,.36,1)}
 html.deck.dk-ctrl-on .dk-foot-n{opacity:0}
 .dk-ctrl:not(.web){top:auto;left:50%;transform:translateX(-50%);bottom:calc((var(--dkH,100vh) - 810px * var(--dkS,1)) / 2 + 24px * var(--dkS,1) - 16px);padding:2px}
 html.dk-fs .dk-ctrl:not(.web){top:auto;bottom:calc((var(--dkH,100vh) - 810px * var(--dkS,1)) / 2 + 24px * var(--dkS,1) - 16px)}
+
+/* ---- pass 7: numbered steps never overlap in the service columns; key numbers keep only the cross ---- */
+html.deck .lab-col .num-list li{min-height:24px;margin:5px 0}
+html.deck .dk-statcol .stats.four .stat:nth-child(odd){border-left:0;padding-left:0}
 </style>
 <style id="web-css">
 /* =====================================================================
@@ -3088,11 +3092,11 @@ html:not(.deck) .cm-ctl input{height:28px}
 var root=document.documentElement,main=document.getElementById('top');
 if(!main)return;
 var W=1440,H=810,BW=1280,BH=554;
-var pref=null;try{pref=localStorage.getItem('amDeck');}catch(e){}
+var pref=null;try{localStorage.removeItem('amDeck');}catch(e){}
 var qs=new URLSearchParams(location.search);
 if(qs.has('deck'))pref=qs.get('deck')==='0'?'0':'1';
 var big=function(){return innerWidth>=1000&&innerHeight>=520;};
-var setPref=function(v){try{localStorage.setItem('amDeck',v);}catch(e){}var u=new URL(location.href);u.searchParams.set('deck',v);u.hash='';location.replace(u.toString());};
+var setPref=function(v){var u=new URL(location.href);u.searchParams.set('deck',v);u.hash='';location.replace(u.toString());};
 var icon=function(d){return '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+d+'"/></svg>';};
 
 if(pref!=='1'||!big()){
