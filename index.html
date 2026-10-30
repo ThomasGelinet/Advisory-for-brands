@@ -4416,8 +4416,8 @@ safe(function(){
   new MutationObserver(function(ms){
     ms.forEach(function(mu){
       var b=mu.target;if(!b.matches)return;var open=b.getAttribute('aria-expanded')==='true';
-      if(b.matches('#cases .row-head')){var r=b.closest('.row');setHash(open?r.id:'cases');}
-      else if(b.matches('#am .row-head')){var r2=b.closest('.row');setHash(open?r2.id:'am');}
+      if(b.matches('#cases .row-head')){var r=b.closest('.row');setHash(open?r.id:'');}
+      else if(b.matches('#am .row-head')){var r2=b.closest('.row');setHash(open?r2.id:'');}
       else if(b.matches('#cases .row-inner .acc-btn')){var id=b.getAttribute('aria-controls');var r3=b.closest('.row');setHash(open?(REV[id]||id):(r3?r3.id:'cases'));}
     });
   }).observe($('#top'),{subtree:true,attributes:true,attributeFilter:['aria-expanded']});
@@ -4479,6 +4479,21 @@ function buildPrint(){
 addEventListener('beforeprint',buildPrint);
 var mqp=matchMedia('print');if(mqp.addEventListener)mqp.addEventListener('change',function(e){if(e.matches)buildPrint();});
 window.__amWebPrint=buildPrint;
+
+/* ---------- 11. opening: the page always opens at the very top, unless the link points to a section ---------- */
+safe(function(){
+  try{if('scrollRestoration' in history)history.scrollRestoration='manual';}catch(e){}
+  var h=location.hash,moved=false;
+  ['wheel','touchstart','keydown','mousedown'].forEach(function(ev){addEventListener(ev,function(){moved=true;},{passive:true,once:true});});
+  if(!h||h==='#'||h==='#top'){
+    if(h)history.replaceState(null,'',location.pathname+location.search);
+    var toTop=function(){if(!moved)window.scrollTo({top:0,left:0,behavior:'instant'});};
+    toTop();addEventListener('load',function(){toTop();[0,60,200,500].forEach(function(t){setTimeout(toTop,t);});});
+    addEventListener('pageshow',function(e){if(e.persisted)toTop();});
+  }
+  /* the logo goes to the very top too, without leaving #top in the address */
+  $$('a[href="#top"]').forEach(function(a){if(a.classList.contains('w-top'))return;a.addEventListener('click',function(e){e.preventDefault();scrollTo({top:0,behavior:reduce?'auto':'smooth'});history.replaceState(null,'',location.pathname+location.search);});});
+});
 })();
 </script>
 </body>
